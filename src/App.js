@@ -9,7 +9,7 @@ import '@aws-amplify/ui-react/styles.css';
 import awsExports from "./aws-exports";
 Amplify.configure(awsExports);
 
-const initialState = { name: '', description: '' }
+const initialState = { name: '', description: '', userId: '' }
 
 const App = () => {
   const [formState, setFormState] = useState(initialState)
@@ -49,10 +49,12 @@ const App = () => {
         <div style={styles.container}>
           <h1>Hello {user.username}</h1>
           <button style={styles.button} onClick={signOut}>Sign out</button>
+          <button style={styles.button} onClick={()=>{console.log(user.attributes.email)}} >console UserEmail</button>
           <br />
           <h2>Amplify Todos</h2>
           <input
             onChange={event => setInput('name', event.target.value)}
+            onClick={event => setInput('userId', user.attributes.email) }
             style={styles.input}
             value={formState.name}
             placeholder="Name"
@@ -63,12 +65,15 @@ const App = () => {
             value={formState.description}
             placeholder="Description"
           />
+
+          <button onClick={()=> console.log(todos)}>check</button>
           <button style={styles.button} onClick={addTodo}>Create Todo</button>
           {
-            todos.map((todo, index) => (
+            todos.filter(todo => todo.userId == user.attributes.email).map((todo, index) => (
               <div key={todo.id ? todo.id : index} style={styles.todo}>
                 <p style={styles.todoName}>{todo.name}</p>
                 <p style={styles.todoDescription}>{todo.description}</p>
+                <p style={styles.todoDescription}>{todo.userId}</p>
               </div>
             ))
           }
