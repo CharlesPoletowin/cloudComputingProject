@@ -5,7 +5,7 @@ import { Authenticator, Button } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { useState } from 'react';
 
-// TODO: use react redux to save user log in state and use in other places
+// use react redux to save user log in state and use in other places
 const App = () => {
     var [checkStatus, setStatus] = useState(true);
     const dispatch = useDispatch();
@@ -56,7 +56,6 @@ const App = () => {
                                 () => {
                                     dispatch(logout())
                                     signOut()
-                                    window.location.reload()
                                     }}
                             >
                                 Sign out
