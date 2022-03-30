@@ -6,29 +6,39 @@ import {
   Route,
 } from "react-router-dom";
 import '@aws-amplify/ui-react/styles.css';
+import { Provider } from 'react-redux'
+import {createStore} from 'redux'
 
 import AmplifyTodo from './routes/amplifyTodo'
 import LambdaTodo from './routes/lambdaTodo'
 import IndexPage from './routes/IndexPage';
+
+import allReducers from './redux/reducer';
 
 import Headers from './common/header'
 
 import awsExports from "./aws-exports";
 Amplify.configure(awsExports);
 
-
+const store = createStore(allReducers)
 
 const App = () => {
   
   return (
-    <div style={{ width: "400", margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: "20" }}>
-      <Headers/>
-      <Routes>
-        <Route path="/" element={<IndexPage />} />
-        <Route path="/amplify" element={<AmplifyTodo />} />
-        <Route path="/lambda" element={<LambdaTodo />} />
-      </Routes>
-    </div>
+    <Provider store={store}>
+      <div 
+          style={{ width: "400", margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: "20" }}>
+
+        <Headers/>
+
+        <Routes>
+          <Route path="/" element={<IndexPage />} />
+          <Route path="/amplify" element={<AmplifyTodo />} />
+          <Route path="/lambda" element={<LambdaTodo />} />
+        </Routes>
+
+      </div>
+    </Provider>
   );
 }
 

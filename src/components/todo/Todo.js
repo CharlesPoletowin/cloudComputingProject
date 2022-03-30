@@ -41,20 +41,24 @@ function Task({ task, index, completeTask, removeTask }) {
 }
 
 function Todo() {
-    const [tasks, setTasks] = useState([
-        {
-            title: "Grab some Pizza",
-            completed: true
-        },
-        {
-            title: "Do your workout",
-            completed: true
-        },
-        {
-            title: "Hangout with friends",
-            completed: false
-        }
-    ]);
+    const [tasks, setTasks] = useState( 
+        () => {
+                return  [
+                    {
+                        title: "Grab some Pizza",
+                        completed: true
+                    },
+                    {
+                        title: "Do your workout",
+                        completed: true
+                    },
+                    {
+                        title: "Hangout with friends",
+                        completed: false
+                    }
+                ]
+            }
+       );
 
     const addTask = title => {
         const newTasks = [...tasks, { title, completed: false }];
