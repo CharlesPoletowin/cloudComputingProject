@@ -1,13 +1,33 @@
 import React, { useState } from 'react';
 import './Todo.css';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
-
-function CreateTask({ addTask }) {
+function CreateTask({ addTask, user }) {
     const [value, setValue] = useState("");
-
+    const [dateValue, setDate] = useState("2022-03-30")
+    const [timeValue, setTime] = useState("22:00")
     const handleSubmit = e => {
         e.preventDefault();
         if (!value) return;
+        if (!user | !user.attributes | !user.attributes.email) return;
+        
+        var objSubmit = {}
+        objSubmit["userId"] = user.attributes.email
+        objSubmit["status"] = "create"
+        objSubmit["createTime"] = Date.now().toString()
+        objSubmit["title"] = value
+        objSubmit["deadlineDate"] = dateValue
+        objSubmit["deadlineTime"] = timeValue
+        objSubmit["finish"] = false
+
+        axios.post("https://ugnn69x209.execute-api.us-east-1.amazonaws.com/dev", 
+            objSubmit
+        ).then(res => {
+            console.log(res.data)
+        }).catch(error => {
+            console.log(error)
+        })
         
         addTask(value);
         setValue("");
@@ -21,6 +41,36 @@ function CreateTask({ addTask }) {
                 value={value}
                 placeholder="Add a new task"
                 onChange={e => setValue(e.target.value)}
+                required
+            />
+            <input 
+                type="date" 
+                className="input"
+                id="date" 
+                name="finish-date"
+                value={dateValue}
+                min="2000-01-01" 
+                max="2099-12-31"
+                onChange={e => setDate(e.target.value)}
+                required
+            />
+            <input 
+                type="time" 
+                id="appt" 
+                name="appt"
+                value={timeValue}
+                onChange={e => setTime(e.target.value)}
+                required 
+            />
+            <input
+                type="submit"
+                value="Submit"
+                style={{
+                    background: "#649cf5",
+                    color: 'white', 
+                    fontSize: "20px",
+                    fontWeight: "bold"
+                }}
             />
         </form>
     );
@@ -41,6 +91,7 @@ function Task({ task, index, completeTask, removeTask }) {
 }
 
 function Todo() {
+    const user = useSelector(e => e.user)
     const [tasks, setTasks] = useState( 
         () => {
                 return  [
@@ -77,22 +128,24 @@ function Todo() {
         setTasks(newTasks);
     };
 
+    console.log(user)
     return (
         <div className="todo-container">
             <div className="header">TODO - ITEMS</div>
+            <div>{user.attributes.email}</div>
             <div className="tasks">
                 {tasks.map((task, index) => (
                     <Task
-                    task={task}
-                    index={index}
-                    completeTask={completeTask}
-                    removeTask={removeTask}
-                    key={index}
+                        task={task}
+                        index={index}
+                        completeTask={completeTask}
+                        removeTask={removeTask}
+                        key={index}
                     />
                 ))}
             </div>
             <div className="create-task" >
-                <CreateTask addTask={addTask} />
+                <CreateTask addTask={addTask} user={user} />
             </div>
         </div>
     );
