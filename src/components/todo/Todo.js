@@ -19,7 +19,7 @@ function CreateTask({ addTask, user }) {
         var objSubmit = {}
         objSubmit["userId"] = user.attributes.email
         objSubmit["status"] = "create"
-        objSubmit["createTime"] = Date.now().toString()
+        objSubmit["time"] = Date.now().toString()
         objSubmit["title"] = value
         objSubmit["deadlineDate"] = dateValue
         objSubmit["deadlineTime"] = timeValue
@@ -28,6 +28,7 @@ function CreateTask({ addTask, user }) {
         api.post("/", 
             objSubmit
         ).then(_res => {
+            // console.log(_res)
             addTask(objSubmit);
         }).catch(error => {
             console.log(error)
@@ -137,14 +138,35 @@ function Todo() {
 
     const completeTask = index => {
         const newTasks = [...tasks];
-        newTasks[index].completed = true;
-        setTasks(newTasks);
+        newTasks[index].completed = !newTasks[index].completed;
+
+        var objSubmit = {}
+        objSubmit["userId"] = user.attributes.email
+        objSubmit["status"] = "update"
+        objSubmit["time"] = newTasks[index].time
+        objSubmit["completed"] = newTasks[index].completed
+        api.post("/", objSubmit).then(_res => {
+            // console.log(_res)
+            setTasks(newTasks);
+        }).catch(error => {
+            console.log(error)
+        })
     };
 
     const removeTask = index => {
         const newTasks = [...tasks];
-        newTasks.splice(index, 1);
+        var objSubmit = {}
+        objSubmit["userId"] = user.attributes.email
+        objSubmit["status"] = "delete"
+        objSubmit["time"] = newTasks[index].time
+        api.post("/", objSubmit).then(_res => {
+            // console.log(_res)
+            newTasks.splice(index, 1);
         setTasks(newTasks);
+        }).catch(error => {
+            console.log(error)
+        })
+        
     };
 
     setTimeout(() => getData(), 2000)

@@ -20,11 +20,7 @@ const App = () => {
 
   useEffect(() => {
     fetchTodos()
-    axios.get("https://ugnn69x209.execute-api.us-east-1.amazonaws.com/dev").then(res=>{
-      console.log(res.data)
-    }).catch((error)=>{
-      console.log(error)
-    })
+    
   }, [])
 
   function setInput(key, value) {
