@@ -137,6 +137,7 @@ function Todo() {
     };
 
     const completeTask = index => {
+        if (!user | !user.attributes | !user.attributes.email) return;
         const newTasks = [...tasks];
         newTasks[index].completed = !newTasks[index].completed;
 
@@ -154,6 +155,7 @@ function Todo() {
     };
 
     const removeTask = index => {
+        if (!user | !user.attributes | !user.attributes.email) return;
         const newTasks = [...tasks];
         var objSubmit = {}
         objSubmit["userId"] = user.attributes.email
