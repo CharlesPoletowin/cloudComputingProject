@@ -13,8 +13,9 @@
   .task {
     border: 1px solid white;
     border-radius: 5px;
-    padding: 0.5em;
+    padding: 2%;
     margin: 0.5em;
+    width: 90%;
   }
   
   .task button{

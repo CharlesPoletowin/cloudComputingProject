@@ -3,6 +3,10 @@ import './Todo.css';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
+const api = axios.create({
+    baseURL: "https://ugnn69x209.execute-api.us-east-1.amazonaws.com/dev"
+})
+
 function CreateTask({ addTask, user }) {
     const [value, setValue] = useState("");
     const [dateValue, setDate] = useState("2022-03-30")
@@ -19,17 +23,17 @@ function CreateTask({ addTask, user }) {
         objSubmit["title"] = value
         objSubmit["deadlineDate"] = dateValue
         objSubmit["deadlineTime"] = timeValue
-        objSubmit["finish"] = false
+        objSubmit["completed"] = false
 
-        axios.post("https://ugnn69x209.execute-api.us-east-1.amazonaws.com/dev", 
+        api.post("/", 
             objSubmit
-        ).then(res => {
-            console.log(res.data)
+        ).then(_res => {
+            addTask(objSubmit);
         }).catch(error => {
             console.log(error)
         })
         
-        addTask(value);
+        // addTask(value);
         setValue("");
     }
     
@@ -83,36 +87,51 @@ function Task({ task, index, completeTask, removeTask }) {
             className="task"
             style={{ textDecoration: task.completed ? "line-through" : "" }}
         >
-            {task.title}
-            <button style={{ background: "red" }} onClick={() => removeTask(index)}>x</button>
-            <button onClick={() => completeTask(index)}>Complete</button>
+            <div style={{display:"flex", flexDirection:"row", width:"100%"}}>
+                <div style={{display:"flex", flexDirection:"column", width:"100%"}}>
+                    {task.title}
+                    <div style={{fontSize:"8px"}}>deadline: {task.deadlineDate} {task.deadlineTime}</div>
+                </div>
+                <div style={{width:"100%"}}>
+                    <button style={{ background: "red" }} onClick={() => removeTask(index)}>x</button>
+                    <button onClick={() => completeTask(index)}>Complete</button>
+                </div>
+            </div>
+            
+            
         </div>
     );
 }
 
+
+
 function Todo() {
+    
     const user = useSelector(e => e.user)
+
     const [tasks, setTasks] = useState( 
         () => {
                 return  [
-                    {
-                        title: "Grab some Pizza",
-                        completed: true
-                    },
-                    {
-                        title: "Do your workout",
-                        completed: true
-                    },
-                    {
-                        title: "Hangout with friends",
-                        completed: false
-                    }
+                    
                 ]
             }
        );
 
-    const addTask = title => {
-        const newTasks = [...tasks, { title, completed: false }];
+    const getData = async() => {
+        if (!user | !user.attributes | !user.attributes.email) return;
+        var res = await api.get("/",
+            {
+                params: {
+                    userId: user.attributes.email
+                }
+            }
+        ).then(({data}) => data);
+        setTasks(JSON.parse(res.body))
+    }
+
+
+    const addTask = objSubmit => {
+        const newTasks = [...tasks, objSubmit];
         setTasks(newTasks);
     };
 
@@ -128,11 +147,15 @@ function Todo() {
         setTasks(newTasks);
     };
 
-    console.log(user)
+    setTimeout(() => getData(), 2000)
+
     return (
         <div className="todo-container">
             <div className="header">TODO - ITEMS</div>
-            <div>{user.attributes.email}</div>
+            <input type="submit" value="refresh" onClick={()=>{
+                        getData()
+                    }
+                }/>
             <div className="tasks">
                 {tasks.map((task, index) => (
                     <Task
