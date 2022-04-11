@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Todo.css';
 import { useSelector } from 'react-redux';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import axios from 'axios';
 
 const api = axios.create({
     baseURL: "https://ugnn69x209.execute-api.us-east-1.amazonaws.com/dev"
 })
+
+
+const title = "Manage House Chores"
 
 function CreateTask({ addTask, user }) {
     const [value, setValue] = useState("");
@@ -171,15 +175,13 @@ function Todo() {
         
     };
 
-    setTimeout(() => getData(), 2000)
+    useEffect(getData, [user])
 
     return (
         <div className="todo-container">
-            <div className="header">TODO - ITEMS</div>
-            <input type="submit" value="refresh" onClick={()=>{
-                        getData()
-                    }
-                }/>
+            <div className="header">{title}</div>
+            <RefreshIcon onClick={getData} />
+            
             <div className="tasks">
                 {tasks.map((task, index) => (
                     <Task
