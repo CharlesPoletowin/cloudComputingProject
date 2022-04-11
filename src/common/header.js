@@ -1,74 +1,24 @@
-import {useDispatch} from 'react-redux'
-import {login, logout} from '../redux/action'
+
 
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import { useState } from 'react';
+
 import AppBar from './appBar'
 import UserStatus from './userStatus'
 
 // use react redux to save user log in state and use in other places
 const App = () => {
-    var [checkStatus, setStatus] = useState(true);
-    const dispatch = useDispatch();
+
     return (
         <div>
-            <AppBar />
+            
             <Authenticator>
                 {({ signOut, user }) => (
-                    <div style={styles.container}>
+                    <div>
+                        <AppBar logout={signOut}/>
                         <UserStatus user={user} />
-                        {
-                            checkStatus ? 
-                                <h1>Are you {user.username} ?</h1>
-                                :   
-                                <h1>Hello {user.username}</h1> 
-                        }
-                        {
-                            checkStatus ?
-                                <div style={{flexDirection: 'row'}}>
-                                    <button style={{
-                                        flex:"left", 
-                                        width:"50%", 
-                                        backgroundColor: 'black', 
-                                        color: 'white', 
-                                        fontSize: "20px"
-                                        }}
-                                        onClick={
-                                            ()=>{
-                                                setStatus(!checkStatus)
-                                                dispatch(login(user))
-                                            }
-                                        }
-                                    >Yes</button>
-                                    <button style={{
-                                        flex:"left", 
-                                        width:"50%", 
-                                        backgroundColor: 'red', 
-                                        color: 'white', 
-                                        fontSize: "20px"}}
-                                        onClick={
-                                            ()=>{
-                                                setStatus(!checkStatus)
-                                                dispatch(logout())
-                                                signOut()
-                                            }
-                                        }
-                                    >No</button>
-                                </div>
-                                : 
-                                <button style={styles.button} onClick={
-                                    () => {
-                                        dispatch(logout())
-                                        signOut()
-                                        }}
-                                >
-                                    Sign out
-                                </button>
-                        }
-                        
-                        <br />
                     </div>
+                    
                 )}
             </Authenticator>
         </div>

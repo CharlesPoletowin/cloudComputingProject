@@ -13,11 +13,15 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { Link } from "react-router-dom";
 
+import {useDispatch} from 'react-redux'
+import {logout} from '../redux/action'
+
 
 const pages = ['amplify', 'lambda'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const LOGO = 'Title'
 
-const ResponsiveAppBar = () => {
+const ResponsiveAppBar = (props) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -36,6 +40,8 @@ const ResponsiveAppBar = () => {
     setAnchorElUser(null);
   };
 
+  const dispatch = useDispatch();
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -46,7 +52,7 @@ const ResponsiveAppBar = () => {
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
           >
-            Title
+            {LOGO}
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -97,7 +103,7 @@ const ResponsiveAppBar = () => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
           >
-            LOGO
+            {LOGO}
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
@@ -113,6 +119,18 @@ const ResponsiveAppBar = () => {
                 
               </Button>
             ))}
+          </Box>
+
+          <Box sx={{flexGrow: 0}} >
+            <Button
+              onClick={()=>{
+                props.logout();
+                dispatch(logout())
+              }}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+            Logout
+            </Button>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
