@@ -12,6 +12,7 @@ import {createStore} from 'redux'
 import AmplifyTodo from './routes/amplifyTodo'
 import LambdaTodo from './routes/lambdaTodo'
 import IndexPage from './routes/IndexPage';
+import Apartments from './routes/apartments';
 
 import allReducers from './redux/reducer';
 
@@ -23,10 +24,10 @@ Amplify.configure(awsExports);
 const store = createStore(allReducers)
 
 const App = () => {
-  
+
   return (
     <Provider store={store}>
-      <div 
+      <div
           style={{ width: "400", margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: "20" }}>
 
         <Headers/>
@@ -35,6 +36,7 @@ const App = () => {
           <Route path="/" element={<IndexPage />} />
           <Route path="/amplify" element={<AmplifyTodo />} />
           <Route path="/lambda" element={<LambdaTodo />} />
+          <Route path="/apartments" element={<Apartments />} />
         </Routes>
 
       </div>

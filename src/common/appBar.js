@@ -17,7 +17,7 @@ import {useDispatch} from 'react-redux'
 import {logout} from '../redux/action'
 
 
-const pages = ['amplify', 'lambda'];
+const pages = ['amplify', 'lambda', 'apartments'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const LOGO = 'Title'
 
@@ -87,7 +87,7 @@ const ResponsiveAppBar = (props) => {
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
-                    <Link 
+                    <Link
                         style={{textDecoration: "none", color:'black'}}
                         to={`/${page}`}>
                         {page}
@@ -112,11 +112,11 @@ const ResponsiveAppBar = (props) => {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                
-                <Link 
+
+                <Link
                 style={{textDecoration: "none", color:'white'}}
                 to={`/${page}`}>{page}</Link>
-                
+
               </Button>
             ))}
           </Box>

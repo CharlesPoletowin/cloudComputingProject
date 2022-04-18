@@ -19,7 +19,7 @@ function CreateTask({ addTask, user }) {
         e.preventDefault();
         if (!value) return;
         if (!user | !user.attributes | !user.attributes.email) return;
-        
+
         var objSubmit = {}
         objSubmit["userId"] = user.attributes.email
         objSubmit["status"] = "create"
@@ -29,7 +29,7 @@ function CreateTask({ addTask, user }) {
         objSubmit["deadlineTime"] = timeValue
         objSubmit["completed"] = false
 
-        api.post("/", 
+        api.post("/",
             objSubmit
         ).then(_res => {
             // console.log(_res)
@@ -37,11 +37,11 @@ function CreateTask({ addTask, user }) {
         }).catch(error => {
             console.log(error)
         })
-        
+
         // addTask(value);
         setValue("");
     }
-    
+
     return (
         <form onSubmit={handleSubmit}>
             <input
@@ -52,31 +52,31 @@ function CreateTask({ addTask, user }) {
                 onChange={e => setValue(e.target.value)}
                 required
             />
-            <input 
-                type="date" 
+            <input
+                type="date"
                 className="input"
-                id="date" 
+                id="date"
                 name="finish-date"
                 value={dateValue}
-                min="2000-01-01" 
+                min="2000-01-01"
                 max="2099-12-31"
                 onChange={e => setDate(e.target.value)}
                 required
             />
-            <input 
-                type="time" 
-                id="appt" 
+            <input
+                type="time"
+                id="appt"
                 name="appt"
                 value={timeValue}
                 onChange={e => setTime(e.target.value)}
-                required 
+                required
             />
             <input
                 type="submit"
                 value="Submit"
                 style={{
                     background: "#649cf5",
-                    color: 'white', 
+                    color: 'white',
                     fontSize: "20px",
                     fontWeight: "bold"
                 }}
@@ -102,8 +102,8 @@ function Task({ task, index, completeTask, removeTask }) {
                     <button onClick={() => completeTask(index)}>Complete</button>
                 </div>
             </div>
-            
-            
+
+
         </div>
     );
 }
@@ -111,16 +111,16 @@ function Task({ task, index, completeTask, removeTask }) {
 
 
 function Todo() {
-    
+
     const user = useSelector(e => e.user)
 
-    const [tasks, setTasks] = useState( 
+    const [tasks, setTasks] = useState(
         () => {
                 return  [
-                    
+
                 ]
             }
-       );
+    );
 
     const getData = async() => {
         if (!user | !user.attributes | !user.attributes.email) return;
@@ -172,7 +172,7 @@ function Todo() {
         }).catch(error => {
             console.log(error)
         })
-        
+
     };
 
     useEffect(getData, [user])
@@ -181,7 +181,7 @@ function Todo() {
         <div className="todo-container">
             <div className="header">{title}</div>
             <RefreshIcon onClick={getData} />
-            
+
             <div className="tasks">
                 {tasks.map((task, index) => (
                     <Task

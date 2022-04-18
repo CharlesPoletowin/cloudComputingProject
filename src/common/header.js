@@ -11,19 +11,16 @@ const App = () => {
 
     return (
         <div>
-            
             <Authenticator>
                 {({ signOut, user }) => (
                     <div>
                         <AppBar logout={signOut}/>
                         <UserStatus user={user} />
                     </div>
-                    
                 )}
             </Authenticator>
         </div>
-        
-  );
+    );
 }
 
 const styles = {
@@ -33,6 +30,6 @@ const styles = {
     todoName: { fontSize: 20, fontWeight: 'bold' },
     todoDescription: { marginBottom: 0 },
     button: { backgroundColor: 'black', color: 'white', outline: 'none', fontSize: 18, padding: '12px 0px' }
-  }
+}
 
 export default App

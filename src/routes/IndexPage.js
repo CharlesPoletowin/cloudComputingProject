@@ -7,6 +7,7 @@ export default function IndexPage() {
         <h2>IndexPage Route</h2>
         <Link to="/amplify">amplify</Link> |{" "}
         <Link to="/lambda">lambda</Link>
+        <Link to="/apartments">apartments</Link>
       </main>
     );
   }
