@@ -117,7 +117,6 @@ function Todo() {
     const [tasks, setTasks] = useState(
         () => {
                 return  [
-
                 ]
             }
     );
@@ -168,7 +167,7 @@ function Todo() {
         api.post("/", objSubmit).then(_res => {
             // console.log(_res)
             newTasks.splice(index, 1);
-        setTasks(newTasks);
+            setTasks(newTasks);
         }).catch(error => {
             console.log(error)
         })
