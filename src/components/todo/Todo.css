@@ -1,5 +1,3 @@
-
-  
   .todo-container {
     background: rgb(41, 33, 33);
     width: 60vw;
@@ -9,7 +7,7 @@
     color: white;
     border: 3px solid rgb(36, 110, 194);
   }
-  
+
   .task {
     border: 1px solid white;
     border-radius: 5px;
@@ -17,7 +15,7 @@
     margin: 0.5em;
     width: 90%;
   }
-  
+
   .task button{
     background: rgb(12, 124, 251);
     border-radius: 5px;
@@ -28,13 +26,13 @@
     color: white;
     float: right;
   }
-  
+
   .header {
     margin: 0.5em;
     font-size: 2em;
     text-align: center;
   }
-  
+
   .create-task input {
     margin: 0.5em 2em;
     width: 80%;
