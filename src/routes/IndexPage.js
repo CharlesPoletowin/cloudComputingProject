@@ -6,7 +6,7 @@ export default function IndexPage() {
       <main style={{ padding: "1rem 0" }}>
         <h2>IndexPage Route</h2>
         <Link to="/amplify">amplify</Link> |{" "}
-        <Link to="/lambda">lambda</Link>
+        <Link to="/lambda">lambda</Link> |{" "}
         <Link to="/apartment">apartment</Link>
       </main>
     );
