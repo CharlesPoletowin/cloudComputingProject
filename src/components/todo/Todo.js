@@ -12,7 +12,7 @@ const api = axios.create({
 const title = "Manage House Chores"
 
 function CreateTask({ addTask, user }) {
-    const [value, setValue] = useState("");
+    const [value, setValue] = useState("")
     const [dateValue, setDate] = useState("2022-03-30")
     const [timeValue, setTime] = useState("22:00")
     const handleSubmit = e => {
@@ -102,8 +102,6 @@ function Task({ task, index, completeTask, removeTask }) {
                     <button onClick={() => completeTask(index)}>Complete</button>
                 </div>
             </div>
-
-
         </div>
     );
 }

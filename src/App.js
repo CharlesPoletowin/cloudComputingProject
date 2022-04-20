@@ -12,7 +12,7 @@ import {createStore} from 'redux'
 import AmplifyTodo from './routes/amplifyTodo'
 import LambdaTodo from './routes/lambdaTodo'
 import IndexPage from './routes/IndexPage';
-import Apartments from './routes/apartments';
+import Apartment from './routes/apartment';
 
 import allReducers from './redux/reducer';
 
@@ -36,7 +36,7 @@ const App = () => {
           <Route path="/" element={<IndexPage />} />
           <Route path="/amplify" element={<AmplifyTodo />} />
           <Route path="/lambda" element={<LambdaTodo />} />
-          <Route path="/apartments" element={<Apartments />} />
+          <Route path="/apartment" element={<Apartment />} />
         </Routes>
 
       </div>
