@@ -31,7 +31,9 @@ function Apartment() {
             }
         ).then(({data}) => data)
         if (getRoommatesRes.statusCode === 200) {
-            setRoommates(JSON.parse(getRoommatesRes.body))
+            const aptInfo = JSON.parse(getRoommatesRes.body)
+            setApartmentName(aptInfo["apartmentId"])
+            setRoommates(aptInfo["roommates"].join(", "))
         }
     }
 
