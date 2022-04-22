@@ -19,8 +19,8 @@ function Apartment() {
     }
 
     const addNewRoommate = objSubmit => {
-        const updatedRoommates = [...roommates, objSubmit.userId]
-        setRoommates(updatedRoommates)
+        // roomates here is string rather than Array
+        setRoommates(roommates + ", " + objSubmit.userId)
     }
 
     const getRoommates = async() => {
@@ -28,7 +28,7 @@ function Apartment() {
         var getRoommatesRes = await api.post("/",
             {
                 userId: user.attributes.email,
-                status: "roommates",
+                status: "apt_info",
             }
         ).then(({data}) => data)
         console.log(getRoommatesRes)
@@ -58,8 +58,15 @@ function Apartment() {
     } else {
         return (
             <div>
-                <p>Your apartment is {apartmentName}</p>
-                <p>Your roommates are {roommates}</p>
+                <div style={{display:"flex", flexWrap: "nowrap"}}>
+                    <div style={{marginRight: "5px"}}>Your apartment is </div>
+                    <div style={{fontWeight:"bold"}}>{apartmentName}</div>
+                </div>
+                
+                <div style={{display:"flex", flexWrap: "nowrap"}}>
+                    <div style={{marginRight: "5px"}}>Your roommates are </div>
+                    <div style={{fontWeight:"bold"}}>{roommates}</div>
+                </div>
                 <br/>
                 <AddRoommate
                     user={user}
@@ -179,7 +186,7 @@ const api1 = axios.create({
 
 const title = "Manage House Chores"
 
-function CreateTask({ addTask, user }) {
+function CreateTask({ addTask, user, apartmentName }) {
     const [value, setValue] = useState("")
     const [dateValue, setDate] = useState("2022-03-30")
     const [timeValue, setTime] = useState("22:00")
@@ -187,9 +194,10 @@ function CreateTask({ addTask, user }) {
         e.preventDefault();
         if (!value) return;
         if (!user | !user.attributes | !user.attributes.email) return;
+        if (!apartmentName) return;
 
         var objSubmit = {}
-        objSubmit["userId"] = user.attributes.email
+        objSubmit["userId"] = apartmentName
         objSubmit["status"] = "create"
         objSubmit["time"] = Date.now().toString()
         objSubmit["title"] = value
@@ -361,7 +369,7 @@ function Todo({apartmentName}) {
                 ))}
             </div>
             <div className="create-task" >
-                <CreateTask addTask={addTask} user={user} />
+                <CreateTask addTask={addTask} user={user} apartmentName={apartmentName} />
             </div>
         </div>
     );
