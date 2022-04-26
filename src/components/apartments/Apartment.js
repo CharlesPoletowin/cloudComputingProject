@@ -3,6 +3,12 @@ import './Apartment.css';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import MuiAlert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const api = axios.create({
     baseURL: "https://kgr24rcf4c.execute-api.us-west-2.amazonaws.com/dev"
@@ -188,7 +194,7 @@ const title = "Manage House Chores"
 
 function CreateTask({ addTask, user, apartmentName }) {
     const [value, setValue] = useState("")
-    const [dateValue, setDate] = useState("2022-03-30")
+    const [dateValue, setDate] = useState(new Date().toLocaleDateString('en-ca'))
     const [timeValue, setTime] = useState("22:00")
     const handleSubmit = e => {
         e.preventDefault();
@@ -234,7 +240,7 @@ function CreateTask({ addTask, user, apartmentName }) {
                 id="date"
                 name="finish-date"
                 value={dateValue}
-                min="2000-01-01"
+                min={new Date().toLocaleDateString('en-ca')}
                 max="2099-12-31"
                 onChange={e => setDate(e.target.value)}
                 required
@@ -275,7 +281,7 @@ function Task({ task, index, completeTask, removeTask }) {
                 </div>
                 <div style={{width:"100%"}}>
                     <button style={{ background: "red" }} onClick={() => removeTask(index)}>x</button>
-                    <button onClick={() => completeTask(index)}>Complete</button>
+                    <button onClick={() => completeTask(index)}>{!task.completed ? "Complete" : "Redo"}</button>
                 </div>
             </div>
         </div>
@@ -294,6 +300,39 @@ function Todo({apartmentName}) {
                 ]
             }
     );
+    const [overDueNumber, setOverDueNumber] = useState(0)
+    const [toDueNumber, setToDueNumber] = useState(0)
+    const [finishValue, setFinishValue] = useState(0)
+    const [showNotification, setNotification] = useState(false)
+
+    Date.prototype.timeNow = function () {
+        return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes();
+    }
+
+    const mySetTasksData = (data) => {
+        const sumFinish = data.reduce((accumalte, cur) => {
+            if (cur["completed"] === true) {
+                return accumalte + 1;
+            }
+            else {
+                return accumalte;
+            }
+        }, 0)
+        const sumOverDue = data.reduce((accumalte, cur) => {
+            if (cur["completed"] === false && cur["deadlineDate"] < new Date().toLocaleDateString('en-ca') ) {
+                return accumalte + 1;
+            }
+            else if (cur["completed"] === false && cur["deadlineDate"] === new Date().toLocaleDateString('en-ca') && new Date().timeNow() > cur["deadlineTime"]) {
+                return accumalte + 1;
+            }
+            else return accumalte;
+        }, 0)
+        setFinishValue(sumFinish)
+        setOverDueNumber(sumOverDue)
+        setToDueNumber(data.length - sumFinish)
+        setTasks(data)
+        setNotification(true)
+    }
 
     const getData = async() => {
         if (!user | !user.attributes | !user.attributes.email) return;
@@ -305,13 +344,13 @@ function Todo({apartmentName}) {
                 }
             }
         ).then(({data}) => data);
-        setTasks(JSON.parse(res.body))
+        mySetTasksData(JSON.parse(res.body))
     }
 
 
     const addTask = objSubmit => {
         const newTasks = [...tasks, objSubmit];
-        setTasks(newTasks);
+        mySetTasksData(newTasks);
     };
 
     const completeTask = index => {
@@ -327,7 +366,7 @@ function Todo({apartmentName}) {
         objSubmit["completed"] = newTasks[index].completed
         api1.post("/", objSubmit).then(_res => {
             // console.log(_res)
-            setTasks(newTasks);
+            mySetTasksData(newTasks);
         }).catch(error => {
             console.log(error)
         })
@@ -343,33 +382,67 @@ function Todo({apartmentName}) {
         api1.post("/", objSubmit).then(_res => {
             // console.log(_res)
             newTasks.splice(index, 1);
-            setTasks(newTasks);
+            mySetTasksData(newTasks);
         }).catch(error => {
             console.log(error)
         })
 
     };
 
-    useEffect(getData, [user])
+    useEffect(() => {
+        getData()
+    }, [user])
 
     return (
-        <div className="todo-container1">
-            <div className="header">{title}</div>
-            <RefreshIcon onClick={getData} />
-
-            <div className="tasks">
-                {tasks.map((task, index) => (
-                    <Task
-                        task={task}
-                        index={index}
-                        completeTask={completeTask}
-                        removeTask={removeTask}
-                        key={index}
-                    />
-                ))}
+        <div>
+            <div style={{position:"relative", height:"2px"}}>
+                <div style={{position:"absolute",width:"300px", height:"8px", right:"0"}}>
+                    {showNotification ? 
+                    <Stack spacing={2} sx={{ width: '100%' }} >
+                        {
+                        overDueNumber > 0 ? 
+                        <Alert severity="error" onClick = {() => {setOverDueNumber(-1)}}>
+                            You have forgotten to finished {overDueNumber} house chores!
+                        </Alert>
+                        : ""
+                        }
+                        {
+                            toDueNumber > 0 ?
+                            <Alert severity="warning" onClick = {() => {setToDueNumber(-1)}}>
+                                You need to finished {toDueNumber} house chores soon!
+                            </Alert>
+                            : ""
+                        }
+                        {
+                            finishValue > 0 ?
+                            <Alert severity="success" onClick = {() => {setFinishValue(-1)}}>
+                                You have finished {finishValue} house chores! Congratulations!
+                            </Alert>
+                            : ""
+                        }
+                    </Stack>
+                    : "" }
+                </div>
             </div>
-            <div className="create-task" >
-                <CreateTask addTask={addTask} user={user} apartmentName={apartmentName} />
+            
+            <div className="todo-container">
+                <div className="header">{title}</div>
+                <RefreshIcon onClick={getData} />
+
+                <div className="tasks">
+                    {tasks.map((task, index) => (
+                        <Task
+                            task={task}
+                            index={index}
+                            completeTask={completeTask}
+                            removeTask={removeTask}
+                            key={index}
+                        />
+                    ))}
+                </div>
+                <div className="create-task" >
+                    <CreateTask addTask={addTask} user={user} apartmentName={apartmentName}/>
+                </div>
             </div>
         </div>
     );
