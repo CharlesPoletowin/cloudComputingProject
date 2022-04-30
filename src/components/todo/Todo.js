@@ -85,7 +85,8 @@ function CreateTask({ addTask, user }) {
                     background: "#649cf5",
                     color: 'white',
                     fontSize: "20px",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
+                    cursor: "pointer"
                 }}
             />
         </form>

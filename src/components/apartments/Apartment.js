@@ -5,6 +5,7 @@ import axios from 'axios';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import MuiAlert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -79,7 +80,9 @@ function Apartment() {
                     apartmentName={apartmentName}
                     addNewRoommate={addNewRoommate}
                 />
-                <Todo apartmentName={apartmentName}/>
+                <Todo apartmentName={apartmentName}
+                      roommates = {roommates}
+                />
             </div>
         )
     }
@@ -210,7 +213,7 @@ function CreateTask({ addTask, user, apartmentName }) {
         objSubmit["deadlineDate"] = dateValue
         objSubmit["deadlineTime"] = timeValue
         objSubmit["completed"] = false
-        objSubmit["notifiy"] = true
+        objSubmit["notifiy"] = false
 
         api1.post("/",
             objSubmit
@@ -261,7 +264,8 @@ function CreateTask({ addTask, user, apartmentName }) {
                     background: "#649cf5",
                     color: 'white',
                     fontSize: "20px",
-                    fontWeight: "bold"
+                    fontWeight: "bold",
+                    cursor: "pointer"
                 }}
             />
         </form>
@@ -291,7 +295,7 @@ function Task({ task, index, completeTask, removeTask }) {
 
 
 
-function Todo({apartmentName}) {
+function Todo({apartmentName, roommates}) {
 
     const user = useSelector(e => e.user)
 
@@ -305,6 +309,9 @@ function Todo({apartmentName}) {
     const [toDueNumber, setToDueNumber] = useState(0)
     const [finishValue, setFinishValue] = useState(0)
     const [showNotification, setNotification] = useState(false)
+
+    const [showPushNotification, setShowPushNotification] = useState(true)
+    const [pushNotificationResult, setPushNotificationResult] = useState(-1)
 
     Date.prototype.timeNow = function () {
         return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes();
@@ -333,6 +340,7 @@ function Todo({apartmentName}) {
         setToDueNumber(data.length - sumFinish)
         setTasks(data)
         setNotification(true)
+        setShowPushNotification(true)
     }
 
     const getData = async() => {
@@ -373,6 +381,22 @@ function Todo({apartmentName}) {
         })
     };
 
+    const pushEmailNotification = () => {
+        if (!user | !user.attributes | !user.attributes.email) return;
+        if (!apartmentName) return
+        var objSubmit = {
+            "userKey": apartmentName,
+            "userId": roommates.split(",").map(item => item.trim())
+        }
+        api1.post("/pushNotifications", objSubmit).then(res => {
+            console.log(res.data.body)
+            setPushNotificationResult(res.data.body)
+        }).catch(error => {
+            console.log(error)
+        })
+        setShowPushNotification(false)
+    }
+
     const removeTask = index => {
         if (!user | !user.attributes | !user.attributes.email) return;
         const newTasks = [...tasks];
@@ -396,6 +420,7 @@ function Todo({apartmentName}) {
 
     return (
         <div>
+            {roommates}
             <div style={{position:"relative", height:"2px"}}>
                 <div style={{position:"absolute",width:"300px", height:"8px", right:"0"}}>
                     {showNotification ? 
@@ -409,8 +434,36 @@ function Todo({apartmentName}) {
                         }
                         {
                             toDueNumber > 0 ?
-                            <Alert severity="warning" onClick = {() => {setToDueNumber(-1)}}>
+                            <Alert  severity="warning" 
+                                    onClick = {() => {setToDueNumber(-1)}}>
                                 You need to finished {toDueNumber} house chores soon!
+                            </Alert>
+                            : ""
+                        }
+                        {
+                            overDueNumber > 0 | toDueNumber > 0 ?
+                            <Button variant="contained" 
+                                    size="large"
+                                    onClick={pushEmailNotification}
+                                    disabled={!showPushNotification}
+                                    >
+                                Notify Your roomates
+                            </Button>
+                            : ""
+                        }
+                        {
+                            (overDueNumber > 0 | toDueNumber > 0) & !showPushNotification & pushNotificationResult > 0 ?
+                            <Alert  severity="success" 
+                                    variant="standard" >
+                                notify succeed
+                            </Alert>
+                            : ""
+                        }
+                        {
+                            (overDueNumber > 0 | toDueNumber > 0) & !showPushNotification & pushNotificationResult == 0 ?
+                            <Alert  severity="warning"
+                                    variant="standard">
+                                nothing to notify
                             </Alert>
                             : ""
                         }
