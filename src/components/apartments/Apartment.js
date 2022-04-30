@@ -420,7 +420,6 @@ function Todo({apartmentName, roommates}) {
 
     return (
         <div>
-            {roommates}
             <div style={{position:"relative", height:"2px"}}>
                 <div style={{position:"absolute",width:"300px", height:"8px", right:"0"}}>
                     {showNotification ? 
