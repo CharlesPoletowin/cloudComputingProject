@@ -34,6 +34,7 @@ function CreateTask({ addTask, user }) {
         objSubmit["deadlineDate"] = dateValue
         objSubmit["deadlineTime"] = timeValue
         objSubmit["completed"] = false
+        objSubmit["notifiy"] = false
 
         api.post("/",
             objSubmit

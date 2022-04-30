@@ -210,6 +210,7 @@ function CreateTask({ addTask, user, apartmentName }) {
         objSubmit["deadlineDate"] = dateValue
         objSubmit["deadlineTime"] = timeValue
         objSubmit["completed"] = false
+        objSubmit["notifiy"] = true
 
         api1.post("/",
             objSubmit
