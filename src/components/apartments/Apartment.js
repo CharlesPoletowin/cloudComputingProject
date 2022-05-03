@@ -208,6 +208,7 @@ function CreateTask({ addTask, user, apartmentName }) {
         var objSubmit = {}
         objSubmit["userId"] = apartmentName
         objSubmit["status"] = "create"
+        objSubmit["updateUser"] = user.attributes.email
         objSubmit["time"] = Date.now().toString()
         objSubmit["title"] = value
         objSubmit["deadlineDate"] = dateValue
@@ -371,6 +372,7 @@ function Todo({apartmentName, roommates}) {
         var objSubmit = {}
         objSubmit["userId"] = apartmentName
         objSubmit["status"] = "update"
+        objSubmit["updateUser"] = user.attributes.email
         objSubmit["time"] = newTasks[index].time
         objSubmit["completed"] = newTasks[index].completed
         api1.post("/", objSubmit).then(_res => {
@@ -459,7 +461,7 @@ function Todo({apartmentName, roommates}) {
                             : ""
                         }
                         {
-                            (overDueNumber > 0 | toDueNumber > 0) & !showPushNotification & pushNotificationResult == 0 ?
+                            (overDueNumber > 0 | toDueNumber > 0) & !showPushNotification & pushNotificationResult === 0 ?
                             <Alert  severity="warning"
                                     variant="standard">
                                 nothing to notify

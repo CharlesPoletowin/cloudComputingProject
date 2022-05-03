@@ -28,6 +28,7 @@ function CreateTask({ addTask, user }) {
 
         var objSubmit = {}
         objSubmit["userId"] = user.attributes.email
+        objSubmit["updateUser"] = user.attributes.email
         objSubmit["status"] = "create"
         objSubmit["time"] = Date.now().toString()
         objSubmit["title"] = value
@@ -185,6 +186,7 @@ function Todo() {
 
         var objSubmit = {}
         objSubmit["userId"] = user.attributes.email
+        objSubmit["updateUser"] = user.attributes.email
         objSubmit["status"] = "update"
         objSubmit["time"] = newTasks[index].time
         objSubmit["completed"] = newTasks[index].completed
