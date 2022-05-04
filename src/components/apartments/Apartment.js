@@ -109,7 +109,7 @@ function Apartment() {
                     indicatorColor="secondary"
                     onChange={(event, newValue) => {setTabValue(newValue)}}
                     >
-                        <Tab label="" value=""  />
+                        <Tab label="default" value=""  />
                         <Tab label="apartment-chores" value="apartment-chores" to="house-chores" component={Link} />
                         <Tab label="statistics" value="statistics" to="statistics" component={Link} />
                     </Tabs>
@@ -120,6 +120,10 @@ function Apartment() {
                     <Route path='house-chores' element={<Todo apartmentName={apartmentName}roommates = {roommates} />} />
                     <Route path="statistics" element={<Statistics data={statData} />} />
                 </Routes>
+                
+                <div
+                style={{height:"60px"}}
+                ></div>
                 
                 <Outlet/>
             </div>

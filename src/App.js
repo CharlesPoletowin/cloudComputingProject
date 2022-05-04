@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import Amplify, { API, graphqlOperation } from 'aws-amplify'
+import React from 'react'
+import Amplify from 'aws-amplify'
 
 import {
   Routes,
@@ -13,7 +13,7 @@ import AmplifyTodo from './routes/amplifyTodo'
 import LambdaTodo from './routes/lambdaTodo'
 import IndexPage from './routes/IndexPage';
 import Apartment from './routes/apartment';
-import Statistics from './routes/statistics';
+
 
 import allReducers from './redux/reducer';
 
@@ -34,7 +34,7 @@ const App = () => {
         <Headers/>
 
         <Routes>
-          <Route path="/" element={<IndexPage />} />
+          <Route path="" element={<IndexPage />} />
           <Route path="amplify" element={<AmplifyTodo />} />
           <Route path="lambda" element={<LambdaTodo />} />
           <Route path="apartment/*" element={<Apartment />} />

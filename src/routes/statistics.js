@@ -68,19 +68,23 @@ function Statistics({data}) {
     );
     
     return (
-        <svg
-            ref={ref}
-            style={{
-            height: 500,
-            width: "100%",
-            marginRight: "0px",
-            marginLeft: "0px",
-            }}
+        <div style={{display:"block",marginLeft:"30vw", textAlign:"center",justifyContent: "center"} }
         >
-            <g className="plot-area" />
-            <g className="x-axis" />
-            <g className="y-axis" />
-        </svg>
+            <svg
+                ref={ref}
+                style={{
+                    height: "30vw",
+                    width: "100%",
+                    display: "block",
+                    margin: "0 auto"
+                }}
+            >
+                <g className="plot-area" />
+                <g className="x-axis" />
+                <g className="y-axis" />
+            </svg>
+        </div>
+        
     );
 }
 
