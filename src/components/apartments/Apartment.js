@@ -6,6 +6,11 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import MuiAlert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import { Link, Outlet, Routes, Route,} from "react-router-dom";
+import Statistics from '../../routes/statistics';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -15,10 +20,17 @@ const api = axios.create({
     baseURL: "https://kgr24rcf4c.execute-api.us-west-2.amazonaws.com/dev"
 })
 
+const api1 = axios.create({
+    baseURL: "https://ugnn69x209.execute-api.us-east-1.amazonaws.com/dev"
+})
+
+
 function Apartment() {
+    const [tabValue, setTabValue] = useState("")
     const user = useSelector(e => e.user)
     const [roommates, setRoommates] = useState([])
     const [apartmentName, setApartmentName] = useState("")
+    const [statData, setStatData] = useState([])
 
     const createApartment = objSubmit => {
         setRoommates(user.attributes.email)
@@ -44,6 +56,14 @@ function Apartment() {
             if (aptInfo["apartmentId"] !== undefined) {
                 setApartmentName(aptInfo["apartmentId"])
                 setRoommates(aptInfo["roommates"].join(", "))
+                api1.get("/statistics", 
+                {
+                    params: {
+                        userId: aptInfo["apartmentId"]
+                    }
+                }).then(res=>{
+                   setStatData(res.data.body)
+                })
             }
         }
     }
@@ -80,9 +100,28 @@ function Apartment() {
                     apartmentName={apartmentName}
                     addNewRoommate={addNewRoommate}
                 />
-                <Todo apartmentName={apartmentName}
-                      roommates = {roommates}
-                />
+                
+
+                <Box sx={{ width: '100%' }}>
+                    <Tabs centered
+                    value={tabValue}
+                    textColor="secondary"
+                    indicatorColor="secondary"
+                    onChange={(event, newValue) => {setTabValue(newValue)}}
+                    >
+                        <Tab label="" value=""  />
+                        <Tab label="apartment-chores" value="apartment-chores" to="house-chores" component={Link} />
+                        <Tab label="statistics" value="statistics" to="statistics" component={Link} />
+                    </Tabs>
+                </Box>
+                
+                
+                <Routes>
+                    <Route path='house-chores' element={<Todo apartmentName={apartmentName}roommates = {roommates} />} />
+                    <Route path="statistics" element={<Statistics data={statData} />} />
+                </Routes>
+                
+                <Outlet/>
             </div>
         )
     }
@@ -188,9 +227,7 @@ function AddRoommate({user, apartmentName, addNewRoommate}) {
 export default Apartment
 
 
-const api1 = axios.create({
-    baseURL: "https://ugnn69x209.execute-api.us-east-1.amazonaws.com/dev"
-})
+
 
 
 const title = "Manage House Chores"

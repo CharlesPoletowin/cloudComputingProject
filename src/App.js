@@ -13,6 +13,7 @@ import AmplifyTodo from './routes/amplifyTodo'
 import LambdaTodo from './routes/lambdaTodo'
 import IndexPage from './routes/IndexPage';
 import Apartment from './routes/apartment';
+import Statistics from './routes/statistics';
 
 import allReducers from './redux/reducer';
 
@@ -34,9 +35,9 @@ const App = () => {
 
         <Routes>
           <Route path="/" element={<IndexPage />} />
-          <Route path="/amplify" element={<AmplifyTodo />} />
-          <Route path="/lambda" element={<LambdaTodo />} />
-          <Route path="/apartment" element={<Apartment />} />
+          <Route path="amplify" element={<AmplifyTodo />} />
+          <Route path="lambda" element={<LambdaTodo />} />
+          <Route path="apartment/*" element={<Apartment />} />
         </Routes>
 
       </div>
