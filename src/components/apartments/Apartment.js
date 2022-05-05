@@ -84,7 +84,7 @@ function Apartment() {
         )
     } else {
         return (
-            <div>
+            <div style={{height:"100%"}}>
                 <div style={{display:"flex", flexWrap: "nowrap"}}>
                     <div style={{marginRight: "5px"}}>Your apartment is </div>
                     <div style={{fontWeight:"bold"}}>{apartmentName}</div>
