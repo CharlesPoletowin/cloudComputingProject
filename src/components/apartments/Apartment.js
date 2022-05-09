@@ -11,6 +11,13 @@ import Statistics from '../../routes/statistics';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -30,11 +37,13 @@ function Apartment() {
     const user = useSelector(e => e.user)
     const [roommates, setRoommates] = useState([])
     const [apartmentName, setApartmentName] = useState("")
+    const [apartmentAddress, setApartmentAddress] = useState("")
     const [statData, setStatData] = useState([])
 
     const createApartment = objSubmit => {
         setRoommates(user.attributes.email)
         setApartmentName(objSubmit.apartmentName)
+        setApartmentAddress(objSubmit.apartmentAddress)
     }
 
     const addNewRoommate = objSubmit => {
@@ -56,6 +65,7 @@ function Apartment() {
             if (aptInfo["apartmentId"] !== undefined) {
                 setApartmentName(aptInfo["apartmentId"])
                 setRoommates(aptInfo["roommates"].join(", "))
+                setApartmentAddress(aptInfo['address'])
                 api1.get("/statistics", 
                 {
                     params: {
@@ -71,7 +81,9 @@ function Apartment() {
     useEffect(getRoommates, [user])
     if (roommates.length === 0) {
         return (
-            <div>
+            <div
+            style={{textAlign: "center",verticalAlign: "middel"}}
+            >
                 <p>No roommates available</p>
                 <p>Would you like to register your apartment?</p>
                 <RegisterApartment
@@ -79,13 +91,17 @@ function Apartment() {
                     user={user}
                     apartmentName={apartmentName}
                     setApartmentName={setApartmentName}
+                    apartmentAddress={apartmentAddress}
+                    setApartmentAddress={setApartmentAddress}
                 />
+                <br/>
+                <ApartmentList user={user}/>
             </div>
         )
     } else {
         return (
-            <div style={{height:"100%"}}>
-                <div style={{display:"flex", flexWrap: "nowrap"}}>
+            <div style={{height:"100%", textAlign: "center",verticalAlign: "middel"}}>
+                <div style={{display:"flex", flexWrap: "nowrap" }}>
                     <div style={{marginRight: "5px"}}>Your apartment is </div>
                     <div style={{fontWeight:"bold"}}>{apartmentName}</div>
                 </div>
@@ -93,6 +109,11 @@ function Apartment() {
                 <div style={{display:"flex", flexWrap: "nowrap"}}>
                     <div style={{marginRight: "5px"}}>Your roommates are </div>
                     <div style={{fontWeight:"bold"}}>{roommates}</div>
+                </div>
+
+                <div style={{display:"flex", flexWrap: "nowrap"}}>
+                    <div style={{marginRight: "5px"}}>Your address is </div>
+                    <div style={{fontWeight:"bold"}}>{apartmentAddress}</div>
                 </div>
                 <br/>
                 <AddRoommate
@@ -131,7 +152,55 @@ function Apartment() {
     }
 }
 
-function RegisterApartment({createApartment, user, apartmentName, setApartmentName}) {
+function ApartmentList({user}) {
+    const [dataList, setDataList] = useState([])
+    useEffect(()=>{
+        if (!user | !user.attributes | !user.attributes.email) return;
+        const myFunc = async() => {
+            var res = await api.post(
+                "/",
+                {
+                    "userId": user.attributes.email,
+                    "status": "list"
+                }
+            ).then(({data}) => data)
+            if (res.statusCode === 200) {
+                console.log(JSON.parse(res.body))
+                setDataList(JSON.parse(res.body))
+            }
+        }
+        myFunc()
+    }, [user])
+    return (
+        <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="apartment list">
+                <TableHead>
+                <TableRow>
+                    <TableCell>Apartment Name</TableCell>
+                    <TableCell align="right">Address</TableCell>
+                    <TableCell align="right">Roommates</TableCell>
+                </TableRow>
+                </TableHead>
+                <TableBody>
+                {dataList.map((d) => (
+                    <TableRow
+                    key={d.apartmentId}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                        <TableCell component="th" scope="row">
+                            {d.apartmentId}
+                        </TableCell>
+                        <TableCell align="right">{d.address}</TableCell>
+                        <TableCell align="right">{d.roommates.join(", ")}</TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    )
+}
+
+function RegisterApartment({createApartment, user, apartmentName, setApartmentName, apartmentAddress, setApartmentAddress}) {
     const handleSubmit = e => {
         e.preventDefault();
         if (!user | !user.attributes | !user.attributes.email) return;
@@ -139,7 +208,8 @@ function RegisterApartment({createApartment, user, apartmentName, setApartmentNa
         var objSubmit = {
             userId: user.attributes.email,
             status: "create",
-            apartmentName: apartmentName
+            apartmentName: apartmentName,
+            address: apartmentAddress
         }
         console.log(objSubmit)
         api.post(
@@ -156,24 +226,44 @@ function RegisterApartment({createApartment, user, apartmentName, setApartmentNa
 
     return (
         <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                className="input"
-                value={apartmentName}
-                placeholder="Apartment name"
-                onChange={e => setApartmentName(e.target.value)}
-                required
-            />
-            <input
-                type="submit"
-                value="Register"
-                style={{
-                    background: "#649cf5",
-                    color: 'white',
-                    fontSize: "20px",
-                    fontWeight: "bold"
-                }}
-            />
+            <div style={{textAlign: "center",verticalAlign: "middel"}}>
+                <div>
+                    <input
+                        type="text"
+                        className="input"
+                        value={apartmentName}
+                        placeholder="Apartment name"
+                        onChange={e => setApartmentName(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <input
+                        type="text"
+                        className='input'
+                        value={apartmentAddress}
+                        placeholder="Apartment address"
+                        onChange={e => setApartmentAddress(e.target.value)}
+                        required
+                        />
+                </div>
+                
+                <div>
+                    <input
+                        type="submit"
+                        value="Register"
+                        style={{
+                            marginTop: "5px",
+                            background: "#649cf5",
+                            color: 'white',
+                            fontSize: "20px",
+                            fontWeight: "bold"
+                        }}
+                    />
+                </div>
+            </div>
+            
+            
         </form>
     )
 }
@@ -205,26 +295,35 @@ function AddRoommate({user, apartmentName, addNewRoommate}) {
     }
 
     return (
+        
         <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                className="input"
-                value={newRoommateEmail}
-                placeholder="New roommate email"
-                onChange={e => setNewRoommateEmail(e.target.value)}
-                required
-            />
-            <input
-                type="submit"
-                value="Add"
-                style={{
-                    background: "#649cf5",
-                    color: 'white',
-                    fontSize: "20px",
-                    fontWeight: "bold"
-                }}
-            />
+            <div style={{textAlign: "center",verticalAlign: "middel"}}>
+                <div>
+                    <input
+                        type="text"
+                        className="input"
+                        value={newRoommateEmail}
+                        placeholder="New roommate email"
+                        onChange={e => setNewRoommateEmail(e.target.value)}
+                        required
+                    />
+                </div>
+                <div style={{marginTop:"5px"}}>
+                    <input
+                        type="submit"
+                        value="Add"
+                        style={{
+                            background: "#649cf5",
+                            color: 'white',
+                            fontSize: "20px",
+                            fontWeight: "bold"
+                        }}
+                    />
+                </div>
+                
+            </div>
         </form>
+        
     )
 }
 
