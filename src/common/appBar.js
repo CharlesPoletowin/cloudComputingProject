@@ -17,7 +17,7 @@ import {useDispatch} from 'react-redux'
 import {logout} from '../redux/action'
 
 
-const pages = ['amplify', 'lambda', 'apartment'];
+const pages = [ "personal-todo-list", 'apartment'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const LOGO = 'Title'
 
